@@ -32,14 +32,15 @@ public class EmployeeDTO {
     private Integer departmentId;
     @JsonAlias("identification_type_id")
     private Integer identificationTypeId;
+    @JsonAlias("is_active")
+    private Boolean isActive;
     private List<Absence> absences;
     @JsonAlias("talent_profile")
     private TalentProfile talentProfile;
-    private List<Employee> employees;
     @JsonAlias("employee_manager")
     private Employee employeeManager;
 
-    public EmployeeDTO(String firstName, String middleName, String lastName, LocalDate birthdate, String jobName, Double salary, String identificationNumber, Boolean isManager, Character gender, String maritalStatus, Integer departmentId, Integer identificationTypeId, List<Absence> absences, TalentProfile talentProfile, List<Employee> employees, Employee employeeManager) {
+    public EmployeeDTO(String firstName, String middleName, String lastName, LocalDate birthdate, String jobName, Double salary, String identificationNumber, Boolean isManager, Character gender, String maritalStatus, Integer departmentId, Integer identificationTypeId, Boolean isActive, List<Absence> absences, TalentProfile talentProfile, List<Employee> employees, Employee employeeManager) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -52,9 +53,9 @@ public class EmployeeDTO {
         this.maritalStatus = maritalStatus;
         this.departmentId = departmentId;
         this.identificationTypeId = identificationTypeId;
+        this.isActive = isActive;
         this.absences = absences;
         this.talentProfile = talentProfile;
-        this.employees = employees;
         this.employeeManager = employeeManager;
     }
 
@@ -110,6 +111,9 @@ public class EmployeeDTO {
         return identificationTypeId;
     }
 
+    public Boolean getActive() {
+        return isActive;
+    }
 
     public List<Absence> getAbsences() {
         return absences;
@@ -117,10 +121,6 @@ public class EmployeeDTO {
 
     public TalentProfile getTalentProfile() {
         return talentProfile;
-    }
-
-    public List<Employee> getEmployees() {
-        return employees;
     }
 
     public Employee getEmployeeManager() {

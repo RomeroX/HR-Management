@@ -48,6 +48,9 @@ public class Employee {
     @Column(name = "identification_type_id", nullable = false)
     private Integer identificationTypeId;
 
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive;
+
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Absence> absences;
 
@@ -65,7 +68,7 @@ public class Employee {
     public Employee(){
     }
 
-    public Employee(String firstName, String middleName, String lastName, LocalDate birthdate, String jobName, Double salary, String identificationNumber, Boolean isManager, Character gender, String maritalStatus, Integer departmentId, Integer identificationTypeId, List<Absence> absences, TalentProfile talentProfile, List<Employee> employees, Employee employeeManager) {
+    public Employee(String firstName, String middleName, String lastName, LocalDate birthdate, String jobName, Double salary, String identificationNumber, Boolean isManager, Character gender, String maritalStatus, Integer departmentId, Integer identificationTypeId, Boolean isActive, List<Absence> absences, TalentProfile talentProfile, List<Employee> employees, Employee employeeManager) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -78,6 +81,7 @@ public class Employee {
         this.maritalStatus = maritalStatus;
         this.departmentId = departmentId;
         this.identificationTypeId = identificationTypeId;
+        this.isActive = isActive;
         this.absences = absences;
         this.talentProfile = talentProfile;
         this.employees = employees;
@@ -136,6 +140,9 @@ public class Employee {
         return identificationTypeId;
     }
 
+    public Boolean getActive() {
+        return isActive;
+    }
 
     public List<Absence> getAbsences() {
         if (absences == null){
