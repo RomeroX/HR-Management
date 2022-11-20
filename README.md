@@ -1,2 +1,2 @@
 # HR-Management
-Repositorio para Sistema de Gestión de Recursos Humanos
+Proyecto para Sistema de Gestión de Recursos Humanos.
