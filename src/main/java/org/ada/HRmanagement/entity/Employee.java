@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "employee")
@@ -49,7 +50,10 @@ public class Employee {
     private Integer identificationTypeId;
 
     @Column(name = "is_active", nullable = false)
-    private Boolean isActive;
+    private boolean isActive;
+
+    @Column(name = "hire_date", nullable = false)
+    private LocalDate hireDate;
 
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Absence> absences;
@@ -57,18 +61,18 @@ public class Employee {
     @OneToOne(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private TalentProfile talentProfile;
 
-    @OneToMany(mappedBy = "employeeManager", fetch = FetchType.LAZY) //Que valor de cascada tengo que usar?
+    @OneToMany(mappedBy = "manager", fetch = FetchType.LAZY) //Que valor de cascada tengo que usar?
     private List<Employee> employees;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "manager_id")
-    private Employee employeeManager;
+    private Employee manager;
 
 
     public Employee(){
     }
 
-    public Employee(String firstName, String middleName, String lastName, LocalDate birthdate, String jobName, Double salary, String identificationNumber, Boolean isManager, Character gender, String maritalStatus, Integer departmentId, Integer identificationTypeId, Boolean isActive, List<Absence> absences, TalentProfile talentProfile, List<Employee> employees, Employee employeeManager) {
+    public Employee(String firstName, String middleName, String lastName, LocalDate birthdate, String jobName, Double salary, String identificationNumber, Boolean isManager, Character gender, String maritalStatus, Integer departmentId, Integer identificationTypeId, boolean isActive, LocalDate hireDate, List<Absence> absences, TalentProfile talentProfile, List<Employee> employees, Employee manager) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -82,10 +86,11 @@ public class Employee {
         this.departmentId = departmentId;
         this.identificationTypeId = identificationTypeId;
         this.isActive = isActive;
+        this.hireDate = hireDate;
         this.absences = absences;
         this.talentProfile = talentProfile;
         this.employees = employees;
-        this.employeeManager = employeeManager;
+        this.manager = manager;
     }
 
     public Integer getId() {
@@ -120,7 +125,16 @@ public class Employee {
         return identificationNumber;
     }
 
-    public Boolean getManager() {
+    public void setManager(Employee manager) {
+        this.manager = manager;
+    }
+
+    public Employee getManager() {
+
+        return manager;
+    }
+
+    public Boolean getIsManager() {
         return isManager;
     }
 
@@ -140,8 +154,12 @@ public class Employee {
         return identificationTypeId;
     }
 
-    public Boolean getActive() {
+    public boolean getActive() {
         return isActive;
+    }
+
+    public LocalDate getHireDate() {
+        return hireDate;
     }
 
     public List<Absence> getAbsences() {
@@ -162,7 +180,5 @@ public class Employee {
         return employees;
     }
 
-    public Employee getEmployeeManager() {
-        return employeeManager;
-    }
+
 }

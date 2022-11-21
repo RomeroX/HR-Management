@@ -1,13 +1,17 @@
 package org.ada.HRmanagement.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+
 public class TalentProfileDTO {
 
     private Integer id;
-    private Long professionalExperience;
-    private Long skills;
+    @JsonAlias("professional_experience")
+    private String professionalExperience;
+    private String skills;
+    @JsonAlias("highest_education_level")
     private String highestEducationLevel;
 
-    public TalentProfileDTO(Long professionalExperience, Long skills, String highestEducationLevel) {
+    public TalentProfileDTO(String professionalExperience, String skills, String highestEducationLevel) {
         this.professionalExperience = professionalExperience;
         this.skills = skills;
         this.highestEducationLevel = highestEducationLevel;
@@ -17,11 +21,11 @@ public class TalentProfileDTO {
         this.id = id;
     }
 
-    public Long getProfessionalExperience() {
+    public String getProfessionalExperience() {
         return professionalExperience;
     }
 
-    public Long getSkills() {
+    public String getSkills() {
         return skills;
     }
 
