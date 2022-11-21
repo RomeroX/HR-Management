@@ -11,9 +11,9 @@ public class TalentProfile {
     private Integer id;
 
     @Column(name = "professional_experience")
-    private Long professionalExperience;
+    private String professionalExperience;
 
-    private Long skills;
+    private String skills;
 
     @Column(name = "highest_education_level", nullable = false)
     private String highestEducationLevel;
@@ -25,7 +25,7 @@ public class TalentProfile {
     public TalentProfile() {
     }
 
-    public TalentProfile(Long professionalExperience, Long skills, String highestEducationLevel, Employee employee) {
+    public TalentProfile(String professionalExperience, String skills, String highestEducationLevel, Employee employee) {
         this.professionalExperience = professionalExperience;
         this.skills = skills;
         this.highestEducationLevel = highestEducationLevel;
@@ -36,11 +36,11 @@ public class TalentProfile {
         return id;
     }
 
-    public Long getProfessionalExperience() {
+    public String getProfessionalExperience() {
         return professionalExperience;
     }
 
-    public Long getSkills() {
+    public String getSkills() {
         return skills;
     }
 
