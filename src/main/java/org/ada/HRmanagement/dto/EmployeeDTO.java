@@ -40,7 +40,7 @@ public class EmployeeDTO {
     @JsonAlias("manager_id")
     private Integer manager;
 
-    public EmployeeDTO(String firstName, String middleName, String lastName, String birthdate, String jobName, Double salary, String identificationNumber, boolean isManager, Character gender, String maritalStatus, Integer departmentId, Integer identificationTypeId, boolean isActive, String hireDate, List<AbsenceDTO> absencesDTO, TalentProfileDTO talentProfileDTO) {
+    public EmployeeDTO(String firstName, String middleName, String lastName, String birthdate, String jobName, Double salary, String identificationNumber, boolean isManager, Character gender, String maritalStatus, Integer departmentId, Integer identificationTypeId, boolean isActive, String hireDate, List<AbsenceDTO> absencesDTO) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -56,7 +56,6 @@ public class EmployeeDTO {
         this.isActive = isActive;
         this.hireDate = hireDate;
         this.absencesDTO = absencesDTO;
-        this.talentProfileDTO = talentProfileDTO;
     }
 
     public void setId(Integer id) {
@@ -128,6 +127,10 @@ public class EmployeeDTO {
 
     public List<AbsenceDTO> getAbsencesDTO () {
         return absencesDTO;
+    }
+
+    public void setTalentProfileDTO(TalentProfileDTO talentProfileDTO) {
+        this.talentProfileDTO = talentProfileDTO;
     }
 
     public TalentProfileDTO getTalentProfileDTO() {

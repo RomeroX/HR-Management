@@ -20,11 +20,9 @@ public class AbsenceService {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private final AbsenceRepository absenceRepository;
-    private final EmployeeRepository employeeRepository;
 
-    public AbsenceService(AbsenceRepository absenceRepository, EmployeeRepository employeeRepository) {
+    public AbsenceService(AbsenceRepository absenceRepository) {
         this.absenceRepository = absenceRepository;
-        this.employeeRepository = employeeRepository;
     }
 
     public void create (Employee employee, List<AbsenceDTO> absencesDTO){
@@ -36,8 +34,7 @@ public class AbsenceService {
 
     //Es correcto sobrecargar el método? o debería encontrar la forma de enviarle el empleado desde el controlador
     // para reutilizar el create que ya existe?
-    public AbsenceDTO create (Integer employeeId, AbsenceDTO absenceDTO ){
-        Employee employee = findEmployee(employeeId);
+    public AbsenceDTO create (Employee employee, AbsenceDTO absenceDTO ){
         Absence absence = mapToEntity(absenceDTO, employee);
         checkForExistingAbsence(absence, employee);
         absenceRepository.save(absence);
@@ -45,30 +42,19 @@ public class AbsenceService {
         return absenceDTO;
     }
 
-    public List<AbsenceDTO> retrieveAll(Integer employeeId) {
-        Employee employee = findEmployee(employeeId);
+    public List<AbsenceDTO> retrieveAll(Employee employee) {
         List<Absence> absences = absenceRepository.findByEmployee(employee);
         return absences.stream()
                 .map(absence -> mapToDTO(absence))
                 .collect(Collectors.toList());
     }
 
-    public AbsenceDTO retrieveById(Integer employeeId, Integer absenceId) {
-        Employee employee = findEmployee(employeeId);
+    public AbsenceDTO retrieveById(Employee employee, Integer absenceId) {
         Optional<Absence> absence = absenceRepository.findByIdAndEmployee(absenceId, employee);
         if (!absence.isPresent()){
             throw new ResourceNotFoundException();
         }
         return mapToDTO(absence.get());
-    }
-
-    //Tengo el mismo método en EmployeeService pero no puedo usarlo porque al inyectar la dependencia me genera un error "Circular References"
-    private Employee findEmployee(Integer employeeId) {
-        Employee employee = employeeRepository.findById(employeeId).orElse(null);
-        if (employee == null){
-            throw new ResourceNotFoundException();
-        }
-        return employee;
     }
 
     private void checkForExistingAbsence(Absence absence, Employee employee ) {

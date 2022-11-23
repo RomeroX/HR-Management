@@ -1,6 +1,8 @@
 package org.ada.HRmanagement.service;
 
+import org.ada.HRmanagement.dto.AbsenceDTO;
 import org.ada.HRmanagement.dto.EmployeeDTO;
+import org.ada.HRmanagement.entity.Absence;
 import org.ada.HRmanagement.entity.Employee;
 import org.ada.HRmanagement.exception.ExistingResourceException;
 import org.ada.HRmanagement.exception.ResourceNotFoundException;
@@ -49,13 +51,6 @@ public class EmployeeService {
         return employeeDTO;
     }
 
-    private void checkForExistingEmployee(String identificationNumber) {
-        Optional<Employee> employee = employeeRepository.findByIdentificationNumber(identificationNumber);
-        if (employee.isPresent()){
-            throw new ExistingResourceException();
-        }
-    }
-
     public List<EmployeeDTO> retrieveAll(){
         List<Employee> employees = employeeRepository.findAll();
         return employees.stream()
@@ -72,9 +67,32 @@ public class EmployeeService {
         return mapToDTO(employee.get());
     }
 
-    //Es correcto usar ResourceNotFoundException cuando el manager que se quiere asignar no existe?
-    // O conviene crear otra excepción nueva?
-    public Employee findEmployee(Integer id){
+    public AbsenceDTO createAbsence(Integer employeeId, AbsenceDTO absenceDTO) {
+        Employee employee = findEmployee(employeeId);
+        AbsenceDTO newAbsenceDTO = absenceService.create(employee, absenceDTO);
+        return newAbsenceDTO;
+    }
+
+    public List<AbsenceDTO> retrieveAllAbsences(Integer employeeId) {
+        Employee employee = findEmployee(employeeId);
+        List<AbsenceDTO> absencesDTO = absenceService.retrieveAll(employee);
+        return absencesDTO;
+    }
+
+    public AbsenceDTO retrieveAbsenceById(Integer employeeId, Integer absenceId) {
+        Employee employee = findEmployee(employeeId);
+        AbsenceDTO absenceDTO = absenceService.retrieveById(employee, absenceId);
+        return absenceDTO;
+    }
+
+    private void checkForExistingEmployee(String identificationNumber) {
+        Optional<Employee> employee = employeeRepository.findByIdentificationNumber(identificationNumber);
+        if (employee.isPresent()){
+            throw new ExistingResourceException();
+        }
+    }
+
+    private Employee findEmployee(Integer id){
         Employee employee = employeeRepository.findById(id).orElse(null);
         if (employee == null){
             throw new ResourceNotFoundException();
@@ -98,11 +116,13 @@ public class EmployeeService {
                 employee.getIdentificationTypeId(),
                 employee.getActive(),
                 employee.getHireDate().toString(),
-                absenceService.mapToDTOS(employee.getAbsences()),
-                talentProfileService.mapToDTO(employee.getTalentProfile()));
+                absenceService.mapToDTOS(employee.getAbsences()));
         employeeDTO.setId(employee.getId());
         if (employee.getManager() != null){
             employeeDTO.setManager(employee.getManager().getId());
+        }
+        if (employee.getTalentProfile() != null){
+            employeeDTO.setTalentProfileDTO(talentProfileService.mapToDTO(employee.getTalentProfile()));
         }
         return employeeDTO;
     }
@@ -129,6 +149,7 @@ public class EmployeeService {
 
         return employee;
     }
+
 
 
 }
