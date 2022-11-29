@@ -19,7 +19,7 @@ public class AbsenceController {
 
     @PostMapping
     public ResponseEntity create(@RequestBody AbsenceDTO absenceDTO) {
-        AbsenceDTO createdAbsenceDTO = absenceService.create(absenceDTO);
+        //AbsenceDTO createdAbsenceDTO = absenceService.create(absenceDTO);
         //return new ResponseEntity(, HttpStatus.CREATED);
         return null;
     }
