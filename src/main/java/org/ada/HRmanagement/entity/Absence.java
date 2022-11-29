@@ -2,6 +2,7 @@ package org.ada.HRmanagement.entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "absence")
@@ -41,16 +42,32 @@ public class Absence {
         return id;
     }
 
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
     public LocalDate getStartDate() {
         return startDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
     public LocalDate getEndDate() {
         return endDate;
     }
 
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
     public String getComments() {
         return comments;
+    }
+
+    public void setAbsenceTypeId(Integer absenceTypeId) {
+        this.absenceTypeId = absenceTypeId;
     }
 
     public Integer getAbsenceTypeId() {
@@ -59,5 +76,22 @@ public class Absence {
 
     public Employee getEmployee() {
         return employee;
+    }
+
+    public void modifyAttributeValue(String attributeName, Object newValue) {
+        switch (attributeName){
+            case ("start_date"):
+                this.startDate = LocalDate.parse((String) newValue, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                break;
+            case ("end_date"):
+                this.endDate = LocalDate.parse((String) newValue, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                break;
+            case ("comments"):
+                this.comments = (String) newValue;
+                break;
+            case("absence_type_id"):
+                this.absenceTypeId = (Integer) newValue;
+                break;
+        }
     }
 }
