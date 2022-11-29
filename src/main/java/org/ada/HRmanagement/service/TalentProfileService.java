@@ -1,6 +1,8 @@
 package org.ada.HRmanagement.service;
 
 import org.ada.HRmanagement.dto.TalentProfileDTO;
+import org.ada.HRmanagement.entity.Employee;
+import org.ada.HRmanagement.entity.TalentProfile;
 import org.ada.HRmanagement.repository.TalentProfileRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +15,25 @@ public class TalentProfileService {
         this.talentProfileRepository = talentProfileRepository;
     }
 
-    public TalentProfileDTO create(TalentProfileDTO talentProfileDTO){
+    public TalentProfileDTO create(Employee employee, TalentProfileDTO talentProfileDTO){
+        TalentProfile talentProfile = mapToEntity(talentProfileDTO, employee);
+        talentProfileRepository.save(talentProfile);
+        return talentProfileDTO;
+    }
 
+    private TalentProfile mapToEntity(TalentProfileDTO talentProfileDTO, Employee employee) {
+        TalentProfile talentProfile = new TalentProfile(talentProfileDTO.getProfessionalExperience(),
+                talentProfileDTO.getSkills(),
+                talentProfileDTO.getHighestEducationLevel(),
+                employee);
+        return talentProfile;
+    }
+
+    public TalentProfileDTO mapToDTO(TalentProfile talentProfile){
+        TalentProfileDTO talentProfileDTO = new TalentProfileDTO(talentProfile.getProfessionalExperience(),
+                talentProfile.getSkills(),
+                talentProfile.getHighestEducationLevel());
+        talentProfileDTO.setId(talentProfile.getId());
         return talentProfileDTO;
     }
 }

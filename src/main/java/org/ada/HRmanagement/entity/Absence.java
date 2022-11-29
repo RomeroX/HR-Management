@@ -17,7 +17,7 @@ public class Absence {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
-    private Long comments;
+    private String comments;
 
     @Column(name = "absence_type_id", nullable = false)
     private Integer absenceTypeId;
@@ -29,7 +29,7 @@ public class Absence {
     public Absence(){
     }
 
-    public Absence(LocalDate startDate, LocalDate endDate, Long comments, Integer absenceTypeId, Employee employee) {
+    public Absence(LocalDate startDate, LocalDate endDate, String comments, Integer absenceTypeId, Employee employee) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.comments = comments;
@@ -49,7 +49,7 @@ public class Absence {
         return endDate;
     }
 
-    public Long getComments() {
+    public String getComments() {
         return comments;
     }
 

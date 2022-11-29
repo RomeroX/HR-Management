@@ -19,7 +19,7 @@ public class TalentProfileController {
 
     @PostMapping
     public ResponseEntity create(@RequestBody TalentProfileDTO talentProfileDTO) {
-        TalentProfileDTO createdTalentProfileDTO = talentProfileService.create(talentProfileDTO);
+        //TalentProfileDTO createdTalentProfileDTO = talentProfileService.create(talentProfileDTO);
         //return new ResponseEntity(, HttpStatus.CREATED);
         return null;
     }

@@ -5,7 +5,6 @@ import org.ada.HRmanagement.entity.Absence;
 import org.ada.HRmanagement.entity.Employee;
 import org.ada.HRmanagement.entity.TalentProfile;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public class EmployeeDTO {
@@ -17,14 +16,13 @@ public class EmployeeDTO {
     private String middleName;
     @JsonAlias("last_name")
     private String lastName;
-    private LocalDate birthdate;
+    private String birthdate;
     @JsonAlias("job_name")
     private String jobName;
     private Double salary;
     @JsonAlias("identification_number")
     private String identificationNumber;
-    @JsonAlias("is_manager")
-    private Boolean isManager;
+    private boolean isManager;
     private Character gender;
     @JsonAlias("marital_status")
     private String maritalStatus;
@@ -32,15 +30,17 @@ public class EmployeeDTO {
     private Integer departmentId;
     @JsonAlias("identification_type_id")
     private Integer identificationTypeId;
-    @JsonAlias("is_active")
-    private Boolean isActive;
-    private List<Absence> absences;
+    private boolean isActive;
+    @JsonAlias("hire_date")
+    private String hireDate;
+    @JsonAlias("absences")
+    private List<AbsenceDTO> absencesDTO;
     @JsonAlias("talent_profile")
-    private TalentProfile talentProfile;
-    @JsonAlias("employee_manager")
-    private Employee employeeManager;
+    private TalentProfileDTO talentProfileDTO;
+    @JsonAlias("manager_id")
+    private Integer manager;
 
-    public EmployeeDTO(String firstName, String middleName, String lastName, LocalDate birthdate, String jobName, Double salary, String identificationNumber, Boolean isManager, Character gender, String maritalStatus, Integer departmentId, Integer identificationTypeId, Boolean isActive, List<Absence> absences, TalentProfile talentProfile, List<Employee> employees, Employee employeeManager) {
+    public EmployeeDTO(String firstName, String middleName, String lastName, String birthdate, String jobName, Double salary, String identificationNumber, boolean isManager, Character gender, String maritalStatus, Integer departmentId, Integer identificationTypeId, boolean isActive, String hireDate, List<AbsenceDTO> absencesDTO) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -54,13 +54,16 @@ public class EmployeeDTO {
         this.departmentId = departmentId;
         this.identificationTypeId = identificationTypeId;
         this.isActive = isActive;
-        this.absences = absences;
-        this.talentProfile = talentProfile;
-        this.employeeManager = employeeManager;
+        this.hireDate = hireDate;
+        this.absencesDTO = absencesDTO;
     }
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public String getFirstName() {
@@ -75,7 +78,7 @@ public class EmployeeDTO {
         return lastName;
     }
 
-    public LocalDate getBirthdate() {
+    public String getBirthdate() {
         return birthdate;
     }
 
@@ -91,7 +94,7 @@ public class EmployeeDTO {
         return identificationNumber;
     }
 
-    public Boolean getManager() {
+    public boolean getIsManager() {
         return isManager;
     }
 
@@ -111,19 +114,37 @@ public class EmployeeDTO {
         return identificationTypeId;
     }
 
-    public Boolean getActive() {
+    public boolean getIsActive() {
         return isActive;
     }
 
-    public List<Absence> getAbsences() {
-        return absences;
+
+    public void setIsActive(boolean isActive) {
+        isActive = isActive;
     }
 
-    public TalentProfile getTalentProfile() {
-        return talentProfile;
+    public String getHireDate() {
+        return hireDate;
     }
 
-    public Employee getEmployeeManager() {
-        return employeeManager;
+    public List<AbsenceDTO> getAbsencesDTO () {
+        return absencesDTO;
     }
+
+    public void setTalentProfileDTO(TalentProfileDTO talentProfileDTO) {
+        this.talentProfileDTO = talentProfileDTO;
+    }
+
+    public TalentProfileDTO getTalentProfileDTO() {
+        return talentProfileDTO;
+    }
+
+    public Integer getManager() {
+        return manager;
+    }
+
+    public void setManager(Integer manager) {
+        this.manager = manager;
+    }
+
 }

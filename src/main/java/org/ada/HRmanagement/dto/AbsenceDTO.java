@@ -1,20 +1,18 @@
 package org.ada.HRmanagement.dto;
 import com.fasterxml.jackson.annotation.JsonAlias;
 
-import java.time.LocalDate;
-
 public class AbsenceDTO {
 
     private Integer id;
     @JsonAlias("start_date")
-    private LocalDate startDate;
+    private String startDate;
     @JsonAlias("end_date")
-    private LocalDate endDate;
-    private Long comments;
+    private String endDate;
+    private String comments;
     @JsonAlias("absence_type_id")
     private Integer absenceTypeId;
 
-    public AbsenceDTO(LocalDate startDate, LocalDate endDate, Long comments, Integer absenceTypeId) {
+    public AbsenceDTO(String startDate, String endDate, String comments, Integer absenceTypeId) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.comments = comments;
@@ -25,15 +23,19 @@ public class AbsenceDTO {
         this.id = id;
     }
 
-    public LocalDate getStartDate() {
+    public Integer getId() {
+        return id;
+    }
+
+    public String getStartDate() {
         return startDate;
     }
 
-    public LocalDate getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public Long getComments() {
+    public String getComments() {
         return comments;
     }
 
