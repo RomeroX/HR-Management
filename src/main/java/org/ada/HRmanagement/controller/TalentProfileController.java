@@ -1,14 +1,16 @@
 package org.ada.HRmanagement.controller;
 
-import org.ada.HRmanagement.dto.AbsenceDTO;
 import org.ada.HRmanagement.dto.TalentProfileDTO;
 import org.ada.HRmanagement.service.TalentProfileService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 
-@RequestMapping(path = "/talent-profiles")
+@RequestMapping(path = "/employees/{employeeId}/talent-profile")
 public class TalentProfileController {
 
     private final TalentProfileService talentProfileService;
@@ -18,15 +20,34 @@ public class TalentProfileController {
     }
 
     @PostMapping
-    public ResponseEntity create(@RequestBody TalentProfileDTO talentProfileDTO) {
-        //TalentProfileDTO createdTalentProfileDTO = talentProfileService.create(talentProfileDTO);
-        //return new ResponseEntity(, HttpStatus.CREATED);
-        return null;
+    public ResponseEntity create(@PathVariable Integer employeeId,
+                                 @RequestBody TalentProfileDTO talentProfileDTO) {
+        talentProfileService.create(employeeId, talentProfileDTO);
+        return new ResponseEntity(talentProfileDTO.getId(), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity retrieve(){
-        // return new ResponseEntity(, HttpStatus.OK);
-        return null;
+    public ResponseEntity retrieve(@PathVariable Integer employeeId){
+        return new ResponseEntity(talentProfileService.retrieve(employeeId), HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    public ResponseEntity delete(@PathVariable Integer employeeId){
+        talentProfileService.delete(employeeId);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PutMapping
+    public ResponseEntity replace(@PathVariable Integer employeeId,
+                                  @RequestBody TalentProfileDTO talentProfileDTO){
+        talentProfileService.replace(employeeId, talentProfileDTO);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PatchMapping
+    public ResponseEntity modify(@PathVariable Integer employeeId,
+                                 @RequestBody Map<String, Object> fieldsToModify){
+        talentProfileService.modify(employeeId, fieldsToModify);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
