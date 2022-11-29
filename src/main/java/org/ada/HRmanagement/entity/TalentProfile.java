@@ -11,9 +11,9 @@ public class TalentProfile {
     private Integer id;
 
     @Column(name = "professional_experience")
-    private Long professionalExperience;
+    private String professionalExperience;
 
-    private Long skills;
+    private String skills;
 
     @Column(name = "highest_education_level", nullable = false)
     private String highestEducationLevel;
@@ -25,7 +25,7 @@ public class TalentProfile {
     public TalentProfile() {
     }
 
-    public TalentProfile(Long professionalExperience, Long skills, String highestEducationLevel, Employee employee) {
+    public TalentProfile(String professionalExperience, String skills, String highestEducationLevel, Employee employee) {
         this.professionalExperience = professionalExperience;
         this.skills = skills;
         this.highestEducationLevel = highestEducationLevel;
@@ -36,12 +36,24 @@ public class TalentProfile {
         return id;
     }
 
-    public Long getProfessionalExperience() {
+    public void setProfessionalExperience(String professionalExperience) {
+        this.professionalExperience = professionalExperience;
+    }
+
+    public String getProfessionalExperience() {
         return professionalExperience;
     }
 
-    public Long getSkills() {
+    public void setSkills(String skills) {
+        this.skills = skills;
+    }
+
+    public String getSkills() {
         return skills;
+    }
+
+    public void setHighestEducationLevel(String highestEducationLevel) {
+        this.highestEducationLevel = highestEducationLevel;
     }
 
     public String getHighestEducationLevel() {
@@ -50,5 +62,19 @@ public class TalentProfile {
 
     public Employee getEmployee() {
         return employee;
+    }
+
+    public void modifyAttributeValue(String attributeName, Object newValue) {
+        switch (attributeName){
+            case("professional_experience"):
+                this.professionalExperience = (String) newValue;
+                break;
+            case("skills"):
+                this.skills = (String) newValue;
+                break;
+            case("highest_education_level"):
+                this.highestEducationLevel = (String) newValue;
+                break;
+        }
     }
 }
