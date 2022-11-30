@@ -106,7 +106,9 @@ public class AbsenceService {
             validateAbsenceType((Integer)fieldsToModify.get("absence_type_id"));
         }
         fieldsToModify.forEach((key, value) -> absenceToModify.modifyAttributeValue(key, value));
-        checkForExistingAbsence(absenceToModify, employee);
+        if (fieldsToModify.containsKey("absence_type_id") || fieldsToModify.containsKey("start_date") ) {
+            checkForExistingAbsence(absenceToModify, employee);
+        }
         absenceRepository.save(absenceToModify);
     }
 
