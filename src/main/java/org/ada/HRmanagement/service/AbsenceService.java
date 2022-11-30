@@ -2,10 +2,12 @@ package org.ada.HRmanagement.service;
 
 import org.ada.HRmanagement.dto.AbsenceDTO;
 import org.ada.HRmanagement.entity.Absence;
+import org.ada.HRmanagement.entity.AbsenceType;
 import org.ada.HRmanagement.entity.Employee;
 import org.ada.HRmanagement.exceptions.ExistingResourceException;
 import org.ada.HRmanagement.exceptions.ResourceNotFoundException;
 import org.ada.HRmanagement.repository.AbsenceRepository;
+import org.ada.HRmanagement.repository.AbsenceTypeRepository;
 import org.ada.HRmanagement.repository.EmployeeRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -23,16 +25,19 @@ public class AbsenceService {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private final AbsenceRepository absenceRepository;
     private final EmployeeRepository employeeRepository;
+    private final AbsenceTypeRepository absenceTypeRepository;
 
-    public AbsenceService(AbsenceRepository absenceRepository, EmployeeRepository employeeRepository) {
+    public AbsenceService(AbsenceRepository absenceRepository, EmployeeRepository employeeRepository, AbsenceTypeRepository absenceTypeRepository) {
         this.absenceRepository = absenceRepository;
         this.employeeRepository = employeeRepository;
+        this.absenceTypeRepository = absenceTypeRepository;
     }
 
     public void create (Employee employee, List<AbsenceDTO> absencesDTO){
         List<Absence> absences = absencesDTO.stream()
                 .map(absenceDTO -> mapToEntity(absenceDTO, employee))
                 .collect(Collectors.toList());
+        absences.forEach(absence -> validateAbsenceType(absence.getAbsenceTypeId()));
         absenceRepository.saveAll(absences);
     }
 
@@ -43,6 +48,7 @@ public class AbsenceService {
         }
         Absence absence = mapToEntity(absenceDTO, employee.get());
         checkForExistingAbsence(absence, employee.get());
+        validateAbsenceType(absence.getAbsenceTypeId());
         absenceRepository.save(absence);
         absenceDTO.setId(absence.getId());
     }
@@ -89,12 +95,16 @@ public class AbsenceService {
         absenceToReplace.setComments(absenceDTO.getComments());
         absenceToReplace.setAbsenceTypeId(absenceDTO.getAbsenceTypeId());
         checkForExistingAbsence(absenceToReplace, employee);
+        validateAbsenceType(absenceToReplace.getAbsenceTypeId());
         absenceRepository.save(absenceToReplace);
     }
 
     public void modify(Integer employeeId, Integer absenceId, Map<String, Object> fieldsToModify) {
         Employee employee = validateEmployee(employeeId);
         Absence absenceToModify = findAbsence(absenceId);
+        if (fieldsToModify.containsKey("absence_type_id")){
+            validateAbsenceType((Integer)fieldsToModify.get("absence_type_id"));
+        }
         fieldsToModify.forEach((key, value) -> absenceToModify.modifyAttributeValue(key, value));
         checkForExistingAbsence(absenceToModify, employee);
         absenceRepository.save(absenceToModify);
@@ -122,6 +132,13 @@ public class AbsenceService {
             throw new ExistingResourceException();
         }
     }
+
+   private void validateAbsenceType(Integer absenceTypeId){
+        Optional<AbsenceType> absenceType = absenceTypeRepository.findById(absenceTypeId);
+        if (!absenceType.isPresent()){
+            throw new ResourceNotFoundException("El tipo de ausencia no es válido");
+        }
+   }
 
     private Absence mapToEntity(AbsenceDTO absenceDTO, Employee employee){
         Absence absence = new Absence(LocalDate.parse(absenceDTO.getStartDate(), DATE_TIME_FORMATTER),
