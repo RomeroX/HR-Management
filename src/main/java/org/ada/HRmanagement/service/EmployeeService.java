@@ -1,10 +1,14 @@
 package org.ada.HRmanagement.service;
 
 import org.ada.HRmanagement.dto.EmployeeDTO;
+import org.ada.HRmanagement.entity.Department;
 import org.ada.HRmanagement.entity.Employee;
+import org.ada.HRmanagement.entity.IdentificationType;
 import org.ada.HRmanagement.exceptions.ExistingResourceException;
 import org.ada.HRmanagement.exceptions.ResourceNotFoundException;
+import org.ada.HRmanagement.repository.DepartmentRepository;
 import org.ada.HRmanagement.repository.EmployeeRepository;
+import org.ada.HRmanagement.repository.IdentificationTypeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -22,16 +26,22 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final AbsenceService absenceService;
     private final TalentProfileService talentProfileService;
+    private final IdentificationTypeRepository identificationTypeRepository;
+    private final DepartmentRepository departmentRepository;
 
-    public EmployeeService(EmployeeRepository employeeRepository, AbsenceService absenceService, TalentProfileService talentProfileService) {
+    public EmployeeService(EmployeeRepository employeeRepository, AbsenceService absenceService, TalentProfileService talentProfileService, IdentificationTypeRepository identificationTypeRepository, DepartmentRepository departmentRepository) {
         this.employeeRepository = employeeRepository;
         this.absenceService = absenceService;
         this.talentProfileService = talentProfileService;
+        this.identificationTypeRepository = identificationTypeRepository;
+        this.departmentRepository = departmentRepository;
     }
 
     public void create (EmployeeDTO employeeDTO) {
         Employee employee = mapToEntity(employeeDTO);
         checkForExistingEmployee(employee.getIdentificationNumber());
+        validateIdentificationType(employee.getIdentificationTypeId());
+        validateDepartment(employee.getDepartmentId());
 
         if (employeeDTO.getManager() != null) {
             employee.setManager(findEmployee(employeeDTO.getManager(), "El mánager que intenta asignarle al empleado, no existe"));
@@ -49,7 +59,6 @@ public class EmployeeService {
         employeeDTO.setId(employee.getId());
 
     }
-
 
     public List<EmployeeDTO> retrieveAll(){
         List<Employee> employees = employeeRepository.findAll();
@@ -70,6 +79,9 @@ public class EmployeeService {
     public void replace(Integer employeeId, EmployeeDTO employeeDTO) {
         Employee employeeToReplace = findEmployee(employeeId, "El empleado no existe");
         checkForExistingEmployee(employeeDTO.getIdentificationNumber());
+        validateIdentificationType(employeeDTO.getIdentificationTypeId());
+        validateDepartment(employeeDTO.getDepartmentId());
+
         employeeToReplace.setFirstName(employeeDTO.getFirstName());
         employeeToReplace.setMiddleName(employeeDTO.getMiddleName());
         employeeToReplace.setLastName(employeeDTO.getLastName());
@@ -97,15 +109,31 @@ public class EmployeeService {
         if (fieldsToModify.containsKey("identification_number")){
             checkForExistingEmployee(fieldsToModify.get("identification_number").toString());
         }
-        fieldsToModify.forEach((key, value) -> employeeToModify.modifyAttributeValue(key, value));
-        if (fieldsToModify.containsKey("manager_id")){
-            Employee newManager = null;
-            if (fieldsToModify.get("manager_id") != null){
-                newManager = findEmployee((Integer)fieldsToModify.get("manager_id"), "El mánager que intenta asignarle al empleado, no existe");
-            }
-            employeeToModify.setManager(newManager);
+
+        if (fieldsToModify.containsKey("identification_type_id")){
+            validateIdentificationType((Integer)fieldsToModify.get("identification_type_id"));
         }
+
+        if (fieldsToModify.containsKey("department_id")){
+            validateDepartment((Integer)fieldsToModify.get("department_id"));
+        }
+
+        fieldsToModify.forEach((key, value) -> employeeToModify.modifyAttributeValue(key, value));
+
+        if (fieldsToModify.containsKey("manager_id")){
+            employeeToModify.setManager(assignManager((Integer)fieldsToModify.get("manager_id")));
+        }
+
         employeeRepository.save(employeeToModify);
+    }
+
+    private Employee assignManager(Integer manager_id){
+        Employee newManager = null;
+        if (manager_id != null){
+            newManager = findEmployee(manager_id, "El mánager que intenta asignarle al empleado, no existe");
+        }
+        return newManager;
+
     }
 
     private void checkForExistingEmployee(String identificationNumber) {
@@ -122,6 +150,21 @@ public class EmployeeService {
         }
         return employee.get();
     }
+
+    private void validateIdentificationType(Integer identificationTypeId) {
+        Optional<IdentificationType> identificationType = identificationTypeRepository.findById(identificationTypeId);
+        if (!identificationType.isPresent()){
+            throw new ResourceNotFoundException("El tipo de identificador no es válido");
+        }
+    }
+
+    private void validateDepartment(Integer departmentId){
+        Optional<Department> department = departmentRepository.findById(departmentId);
+        if (!department.isPresent()){
+            throw new ResourceNotFoundException("El departamento no es válido");
+        }
+    }
+
 
     private EmployeeDTO mapToDTO(Employee employee) {
         EmployeeDTO employeeDTO = new EmployeeDTO(employee.getFirstName(),
