@@ -21,4 +21,11 @@ public class ControllerExceptionHandler {
         return new ResponseEntity(e.getMessage(),
                 HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(InvalidDataException.class)
+    public ResponseEntity handleException(InvalidDataException e) {
+
+        return new ResponseEntity(e.getMessage(),
+                HttpStatus.BAD_REQUEST);
+    }
 }
