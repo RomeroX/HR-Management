@@ -5,6 +5,7 @@ import org.ada.HRmanagement.entity.Department;
 import org.ada.HRmanagement.entity.Employee;
 import org.ada.HRmanagement.entity.IdentificationType;
 import org.ada.HRmanagement.exceptions.ExistingResourceException;
+import org.ada.HRmanagement.exceptions.InvalidDataException;
 import org.ada.HRmanagement.exceptions.ResourceNotFoundException;
 import org.ada.HRmanagement.repository.DepartmentRepository;
 import org.ada.HRmanagement.repository.EmployeeRepository;
@@ -44,7 +45,7 @@ public class EmployeeService {
         validateDepartment(employee.getDepartmentId());
 
         if (employeeDTO.getManager() != null) {
-            employee.setManager(findEmployee(employeeDTO.getManager(), "El mánager que intenta asignarle al empleado, no existe"));
+            employee.setManager(findManager(employeeDTO.getManager()));
         }
         employee = employeeRepository.save(employee);
 
@@ -77,7 +78,7 @@ public class EmployeeService {
     }
 
     public void replace(Integer employeeId, EmployeeDTO employeeDTO) {
-        Employee employeeToReplace = findEmployee(employeeId, "El empleado no existe");
+        Employee employeeToReplace = findEmployee(employeeId);
         checkForExistingEmployee(employeeDTO.getIdentificationNumber());
         validateIdentificationType(employeeDTO.getIdentificationTypeId());
         validateDepartment(employeeDTO.getDepartmentId());
@@ -97,7 +98,7 @@ public class EmployeeService {
         employeeToReplace.setActive(employeeDTO.getIsActive());
         employeeToReplace.setHireDate(LocalDate.parse(employeeDTO.getHireDate(), DATE_TIME_FORMATTER));
         if (employeeDTO.getManager() != null){
-            employeeToReplace.setManager(findEmployee(employeeDTO.getManager(), "El mánager que intenta asignarle al empleado, no existe"));
+            employeeToReplace.setManager(findManager(employeeDTO.getManager()));
         } else{
             employeeToReplace.setManager(null);
         }
@@ -105,7 +106,7 @@ public class EmployeeService {
     }
 
     public void modify(Integer employeeId, Map<String, Object> fieldsToModify) {
-        Employee employeeToModify = findEmployee(employeeId, "El empleado no existe");
+        Employee employeeToModify = findEmployee(employeeId);
         if (fieldsToModify.containsKey("identification_number")){
             checkForExistingEmployee(fieldsToModify.get("identification_number").toString());
         }
@@ -130,7 +131,7 @@ public class EmployeeService {
     private Employee assignManager(Integer manager_id){
         Employee newManager = null;
         if (manager_id != null){
-            newManager = findEmployee(manager_id, "El mánager que intenta asignarle al empleado, no existe");
+            newManager = findManager(manager_id);
         }
         return newManager;
 
@@ -143,10 +144,18 @@ public class EmployeeService {
         }
     }
 
-    private Employee findEmployee(Integer id, String msg){
+    private Employee findEmployee(Integer id){
         Optional<Employee> employee = employeeRepository.findById(id);
         if (!employee.isPresent()){
-            throw new ResourceNotFoundException(msg);
+            throw new ResourceNotFoundException("El empleado no existe");
+        }
+        return employee.get();
+    }
+
+    private Employee findManager(Integer id){
+        Optional<Employee> employee = employeeRepository.findById(id);
+        if (!employee.isPresent()){
+            throw new InvalidDataException("El mánager que intenta asignarle al empleado, no existe");
         }
         return employee.get();
     }
@@ -154,14 +163,14 @@ public class EmployeeService {
     private void validateIdentificationType(Integer identificationTypeId) {
         Optional<IdentificationType> identificationType = identificationTypeRepository.findById(identificationTypeId);
         if (!identificationType.isPresent()){
-            throw new ResourceNotFoundException("El tipo de identificador no es válido");
+            throw new InvalidDataException("El tipo de identificador no es válido");
         }
     }
 
     private void validateDepartment(Integer departmentId){
         Optional<Department> department = departmentRepository.findById(departmentId);
         if (!department.isPresent()){
-            throw new ResourceNotFoundException("El departamento no es válido");
+            throw new InvalidDataException("El departamento no es válido");
         }
     }
 
