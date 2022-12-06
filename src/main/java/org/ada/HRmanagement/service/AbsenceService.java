@@ -5,6 +5,7 @@ import org.ada.HRmanagement.entity.Absence;
 import org.ada.HRmanagement.entity.AbsenceType;
 import org.ada.HRmanagement.entity.Employee;
 import org.ada.HRmanagement.exceptions.ExistingResourceException;
+import org.ada.HRmanagement.exceptions.InvalidDataException;
 import org.ada.HRmanagement.exceptions.ResourceNotFoundException;
 import org.ada.HRmanagement.repository.AbsenceRepository;
 import org.ada.HRmanagement.repository.AbsenceTypeRepository;
@@ -138,7 +139,7 @@ public class AbsenceService {
    private void validateAbsenceType(Integer absenceTypeId){
         Optional<AbsenceType> absenceType = absenceTypeRepository.findById(absenceTypeId);
         if (!absenceType.isPresent()){
-            throw new ResourceNotFoundException("El tipo de ausencia no es válido");
+            throw new InvalidDataException("El tipo de ausencia no es válido");
         }
    }
 
